@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Yasmina Science Contingency Equation</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080f09;
+    --surface: #0d1a0e;
+    --surface2: #122015;
+    --border: #1e3a22;
+    --green: #2ecc71;
+    --green-dark: #1a7a40;
+    --green-dim: #4a8a5a;
+    --amber: #e8a020;
+    --red: #e74c3c;
+    --blue: #4fc3f7;
+    --purple: #ce93d8;
+    --white: #e8f0e9;
+    --muted: #5a8a6a;
+    --scanline: rgba(0,255,50,0.03);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    padding: 40px 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* CRT scanline effect */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      var(--scanline) 2px,
+      var(--scanline) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* Subtle green glow background */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(46,204,113,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    border: 1px solid var(--green-dark);
+    background: var(--surface);
+    padding: 24px 32px;
+    margin-bottom: 8px;
+    position: relative;
+    animation: fadeIn 0.6s ease both;
+  }
+
+  .header::before {
+    content: '> CLASSIFIED: SCIENCE_DEPT_2026.exe';
+    position: absolute;
+    top: -11px;
+    left: 20px;
+    background: var(--bg);
+    padding: 0 8px;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .title {
+    font-size: clamp(14px, 2.5vw, 22px);
+    color: var(--green);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .subtitle {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  /* Main equation box */
+  .equation-box {
+    border: 2px solid var(--green);
+    background: var(--surface2);
+    padding: 28px;
+    margin-bottom: 8px;
+    text-align: center;
+    position: relative;
+    animation: fadeIn 0.6s 0.1s ease both;
+    box-shadow: 0 0 40px rgba(46,204,113,0.08), inset 0 0 40px rgba(46,204,113,0.02);
+  }
+
+  .equation-box::before {
+    content: '[ MASTER EQUATION ]';
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg);
+    padding: 0 12px;
+    font-size: 10px;
+    color: var(--green);
+    letter-spacing: 0.15em;
+    white-space: nowrap;
+  }
+
+  .equation {
+    font-size: clamp(22px, 5vw, 42px);
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: 0.08em;
+    text-shadow: 0 0 20px rgba(46,204,113,0.4);
+    font-family: 'Space Mono', monospace;
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { text-shadow: 0 0 20px rgba(46,204,113,0.4); }
+    50% { text-shadow: 0 0 40px rgba(46,204,113,0.7), 0 0 80px rgba(46,204,113,0.2); }
+  }
+
+  /* Variables grid */
+  .vars-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 8px;
+    animation: fadeIn 0.6s 0.2s ease both;
+  }
+
+  .var-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .var-row:hover {
+    border-color: var(--green-dark);
+    background: var(--surface2);
+  }
+
+  .var-letter {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: 'Space Mono', monospace;
+    min-width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+    line-height: 1.4;
+  }
+
+  .var-desc {
+    font-size: 11px;
+    color: #aaccaa;
+    line-height: 1.6;
+    padding-top: 2px;
+  }
+
+  .var-desc strong {
+    display: block;
+    color: var(--white);
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+
+  /* Two-col section */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+    animation: fadeIn 0.6s 0.3s ease both;
+  }
+
+  .panel {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 18px;
+    position: relative;
+  }
+
+  .panel-label {
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background: var(--bg);
+    padding: 0 8px;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .constraint {
+    display: flex;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 11px;
+    align-items: baseline;
+  }
+
+  .constraint:last-child { border-bottom: none; }
+
+  .constraint-lhs {
+    font-weight: 700;
+    min-width: 90px;
+    flex-shrink: 0;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .constraint-rhs { color: #aaccaa; }
+
+  .simplification {
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    position: relative;
+  }
+
+  .simplification:last-child { margin-bottom: 0; }
+
+  .sim-if {
+    font-weight: 700;
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 4px;
+  }
+
+  .sim-then { color: #aaccaa; }
+
+  .tick { color: var(--green); }
+  .warn { color: var(--amber); }
+
+  /* K constant — the big one */
+  .k-box {
+    border: 2px solid var(--green);
+    background: #081008;
+    padding: 24px 28px;
+    margin-bottom: 8px;
+    position: relative;
+    animation: fadeIn 0.6s 0.4s ease both;
+    box-shadow: 0 0 30px rgba(46,204,113,0.06);
+  }
+
+  .k-box::before {
+    content: '[ THE YASMINA SCIENCE DEPARTMENT CONSTANT — K ]';
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg);
+    padding: 0 12px;
+    font-size: 9px;
+    color: var(--green);
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+  }
+
+  .k-italic {
+    font-style: italic;
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .k-definition {
+    font-size: 13px;
+    color: var(--white);
+    line-height: 1.8;
+    border-left: 3px solid var(--green);
+    padding-left: 16px;
+  }
+
+  /* Proof */
+  .proof-box {
+    border: 1px solid var(--green-dark);
+    background: var(--surface);
+    padding: 16px 20px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    animation: fadeIn 0.6s 0.5s ease both;
+  }
+
+  .proof-label {
+    color: var(--green);
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+
+  .proof-text { color: #aaccaa; line-height: 1.7; }
+
+  /* QED row */
+  .qed-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0 6px;
+    animation: fadeIn 0.6s 0.6s ease both;
+  }
+
+  .qed {
+    font-size: clamp(14px, 2.5vw, 20px);
+    font-weight: 700;
+    color: var(--green);
+    font-family: 'Space Mono', monospace;
+    text-shadow: 0 0 15px rgba(46,204,113,0.5);
+  }
+
+  .drinks { font-size: 28px; letter-spacing: 4px; }
+
+  .footnote {
+    font-size: 9px;
+    color: #2a4a2a;
+    text-align: right;
+    font-style: italic;
+    margin-top: 12px;
+    animation: fadeIn 0.6s 0.7s ease both;
+  }
+
+  /* Emoji section */
+  .emoji-section {
+    margin-top: 16px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 24px;
+    animation: fadeIn 0.6s 0.7s ease both;
+    position: relative;
+  }
+
+  .emoji-section::before {
+    content: '[ SITUATION SUMMARY — EMOJI FORMAT ]';
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background: var(--bg);
+    padding: 0 8px;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+  }
+
+  .emoji-narrative {
+    font-size: clamp(20px, 4vw, 32px);
+    text-align: center;
+    line-height: 1.8;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+  }
+
+  .emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .emoji-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 10px 6px;
+    text-align: center;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+
+  .emoji-card:hover {
+    border-color: var(--green-dark);
+    transform: translateY(-2px);
+  }
+
+  .emoji-card .em { font-size: 26px; display: block; margin-bottom: 4px; }
+  .emoji-card .em-label { font-size: 8.5px; color: var(--muted); line-height: 1.3; }
+
+  .condensed-box {
+    border: 2px solid var(--green);
+    background: #081008;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .condensed-emojis { font-size: 36px; letter-spacing: 6px; }
+
+  .condensed-text {
+    font-size: clamp(11px, 2vw, 15px);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.6;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* Blinking cursor */
+  .cursor::after {
+    content: '█';
+    animation: blink 1s step-end infinite;
+    color: var(--green);
+    margin-left: 2px;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Colour helpers */
+  .c-amber { color: var(--amber); }
+  .c-red   { color: var(--red); }
+  .c-blue  { color: var(--blue); }
+  .c-purple{ color: var(--purple); }
+  .c-green { color: var(--green); }
+  .c-white { color: var(--white); }
+
+  @media (max-width: 640px) {
+    .vars-grid, .two-col { grid-template-columns: 1fr; }
+    .condensed-box { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="title">The Yasmina Science Contingency Equation <span class="cursor"></span></div>
+    <div class="subtitle">Summer 2026 &nbsp;|&nbsp; A peer-reviewed* study in organised chaos &nbsp;|&nbsp; Yasmina British Academy — Science Dept</div>
+  </div>
+
+  <!-- Main equation -->
+  <div class="equation-box">
+    <div class="equation">G &nbsp;=&nbsp; f ( P, T, S, O, D, F, U, H, Δ )</div>
+  </div>
+
+  <!-- Variables -->
+  <div class="vars-grid">
+    <div class="var-row">
+      <span class="var-letter c-green">G</span>
+      <div class="var-desc"><strong>Grade</strong>The thing we are actually trying to get to</div>
+    </div>
+    <div class="var-row">
+      <span class="var-letter c-red">D</span>
+      <div class="var-desc"><strong>Deadline from Pearson</strong>Currently an imaginary number</div>
+    </div>
+    <div class="var-row">
+      <span class="var-letter c-amber">P</span>
+      <div class="var-desc"><strong>Pearson cooperation coefficient</strong>Range: 0 to "we'll let you know shortly"</div>
+    </div>
+    <div class="var-row">
+      <span class="var-letter c-purple">F</span>
+      <div class="var-desc"><strong>Format of assessment</strong>∈ { in school, online, hybrid, "let's just see shall we" }</div>
+    </div>
+    <div class="var-row">
+      <span class="var-letter c-blue">T</span>
+      <div class="var-desc"><strong>Teachers physically present</strong>f(regional conflict, traffic, personal bravery)</div>
+    </div>
+    <div class="var-row">
+      <span class="var-letter c-amber">U</span>
+      <div class="var-desc"><strong>Upload compliance rate</strong>Inversely proportional to how much else is happening</div>
+    </div>
+    <div class="var-row">
+      <span class="var-letter c-green">S</span>
+      <div class="var-desc"><strong>Students physically present</strong>See T, plus: whether their parents prefer Dubai this week</div>
+    </div>
+    <div class="var-row">
+      <span class="var-letter c-blue">H</span>
+      <div class="var-desc"><strong>Hybrid coefficient</strong>= √(teaching half a class in a room + half on Teams). Deeply unpleasant.</div>
+    </div>
+    <div class="var-row" style="grid-column: 1 / -1;">
+      <span class="var-letter c-amber">O</span>
+      <div class="var-desc"><strong>Option chosen per student</strong>A, B, C, D or E — multiplied by the probability they change their mind by Thursday</div>
+    </div>
+    <div class="var-row" style="grid-column: 1 / -1;">
+      <span class="var-letter c-red">Δ</span>
+      <div class="var-desc"><strong>Rate of change of ALL of the above</strong>Approaches ∞ as the submission deadline approaches</div>
+    </div>
+  </div>
+
+  <!-- Constraints + Simplifications -->
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-label">CONSTRAINTS</div>
+      <div class="constraint">
+        <span class="constraint-lhs c-blue">0 ≤ T ≤</span>
+        <span class="constraint-rhs">"however many made it in"</span>
+      </div>
+      <div class="constraint">
+        <span class="constraint-lhs c-blue">0 ≤ S ≤ T</span>
+        <span class="constraint-rhs">students cannot exceed teachers*</span>
+      </div>
+      <div class="constraint">
+        <span class="constraint-lhs c-red">D =</span>
+        <span class="constraint-rhs">TBC &nbsp;(treat as constant until it suddenly isn't)</span>
+      </div>
+      <div class="constraint">
+        <span class="constraint-lhs c-purple">if F = hybrid</span>
+        <span class="constraint-rhs">multiply all variables by π &nbsp;(nothing ever ends cleanly)</span>
+      </div>
+      <div style="font-size:9px;color:var(--muted);margin-top:10px;font-style:italic;">*though it often feels like they do</div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-label">KNOWN SIMPLIFICATIONS</div>
+      <div class="simplification">
+        <div class="sim-if c-green">if O = A for ALL students →</div>
+        <div class="sim-then">G = trivial solution &nbsp;<span class="tick">✓</span>&nbsp; no further working required</div>
+      </div>
+      <div class="simplification" style="margin-top:8px;">
+        <div class="sim-if c-amber">if O = B or C for any student →</div>
+        <div class="sim-then">evidence + marking + uploading + chasing + at least one Monday meeting. See full working.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- K constant -->
+  <div class="k-box">
+    <div class="k-italic">Despite appearances, G is always solvable when K is applied.</div>
+    <div class="k-definition">
+      K is defined as: a team that shows up whatever the circumstances, holds the line for their students,
+      looks after each other, finds a way through every time —
+      and has never yet failed to deliver.
+    </div>
+  </div>
+
+  <!-- Proof -->
+  <div class="proof-box">
+    <div class="proof-label">PROOF OF CONVERGENCE:</div>
+    <div class="proof-text">It has been shown empirically that a sufficiently brilliant science department — equipped with a tracker, a cheat sheet, a rolling agenda, an unreasonable amount of goodwill, and each other — will converge on G regardless of the values of T, S, F, D or Δ. The working will be shown. The answer exists.</div>
+  </div>
+
+  <!-- QED -->
+  <div class="qed-row">
+    <div class="qed">The working will be shown. &nbsp; The answer exists. &nbsp; Q.E.D. 🎓</div>
+    <div class="drinks">🍹🍹🍹</div>
+  </div>
+
+  <!-- Emoji section -->
+  <div class="emoji-section">
+    <div class="emoji-narrative">
+      🌍⚡ → 🏫❌ → 💻📱 → 🤷‍♀️ → 📋✅ → 👩‍🏫👨‍🏫💪 → 📊🔀 → ❓⏰ → 🧪📝 → 🎯✅ → 🍹🍹🍹
+    </div>
+
+    <div class="emoji-grid">
+      <div class="emoji-card"><span class="em">🌍⚡</span><span class="em-label">Regional tension</span></div>
+      <div class="emoji-card"><span class="em">🏫❌</span><span class="em-label">School closes</span></div>
+      <div class="emoji-card"><span class="em">💻📱</span><span class="em-label">Everyone online</span></div>
+      <div class="emoji-card"><span class="em">🤷‍♀️</span><span class="em-label">Nobody knows anything</span></div>
+      <div class="emoji-card"><span class="em">📋✅</span><span class="em-label">Build a plan anyway</span></div>
+      <div class="emoji-card"><span class="em">👩‍🏫💪</span><span class="em-label">Teachers are brilliant</span></div>
+      <div class="emoji-card"><span class="em">📊🔀</span><span class="em-label">Tracker + variables</span></div>
+      <div class="emoji-card"><span class="em">❓⏰</span><span class="em-label">Deadline still unknown</span></div>
+      <div class="emoji-card"><span class="em">🧪📝</span><span class="em-label">Gather the evidence</span></div>
+      <div class="emoji-card"><span class="em">🎯✅</span><span class="em-label">Get the grades</span></div>
+      <div class="emoji-card"><span class="em">🍹🍹🍹</span><span class="em-label">Enormous drink</span></div>
+      <div class="emoji-card" style="border-color:var(--green)"><span class="em">😤→😰→😂→💪</span><span class="em-label">The emotional journey</span></div>
+    </div>
+
+    <div class="condensed-box">
+      <div class="condensed-emojis">🌍⚡📚🤷‍♀️💪</div>
+      <div class="condensed-text">
+        World on fire.<br>
+        Still teaching.<br>
+        No idea how.<br>
+        Do it anyway.
+      </div>
+    </div>
+  </div>
+
+  <div class="footnote">*not peer reviewed by Pearson &nbsp;|&nbsp; Yasmina British Academy Science Department &nbsp;|&nbsp; Summer 2026</div>
+
+</div>
+</body>
+</html>
